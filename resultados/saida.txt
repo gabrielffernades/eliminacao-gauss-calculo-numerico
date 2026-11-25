@@ -1,0 +1,251 @@
+
+========================================================================
+1) EXEMPLOS DA AULA: resolução exata com frações
+========================================================================
+
+--- Exemplo 1 ---  esperado: x = 2, y = -1, z = 4
+Matriz aumentada inicial:
+[ 2   3   3  |  13 ]
+[ 1  -7   2  |  17 ]
+[ 5   8  -1  |  -2 ]
+
+Passo 1: zerando abaixo do pivô (coluna 1)
+L2 <- L2 - (1/2)*L1
+L3 <- L3 - (5/2)*L1
+[ 2      3      3  |     13 ]
+[ 0  -17/2    1/2  |   21/2 ]
+[ 0    1/2  -17/2  |  -69/2 ]
+
+Passo 2: zerando abaixo do pivô (coluna 2)
+L3 <- L3 - (-1/17)*L2
+[ 2      3        3  |       13 ]
+[ 0  -17/2      1/2  |     21/2 ]
+[ 0      0  -144/17  |  -576/17 ]
+
+Retrossubstituição:
+x1 = 2
+x2 = -1
+x3 = 4
+
+Solução: x = 2, y = -1, z = 4
+
+--- Exemplo 2 (três servidores) ---  esperado: x = 8/7, y = 18/7, z = 19/7
+Matriz aumentada inicial:
+[ 1  2  1  |   9 ]
+[ 2  1  3  |  13 ]
+[ 3  2  2  |  14 ]
+
+Passo 1: zerando abaixo do pivô (coluna 1)
+L2 <- L2 - (2)*L1
+L3 <- L3 - (3)*L1
+[ 1   2   1  |    9 ]
+[ 0  -3   1  |   -5 ]
+[ 0  -4  -1  |  -13 ]
+
+Passo 2: zerando abaixo do pivô (coluna 2)
+L3 <- L3 - (4/3)*L2
+[ 1   2     1  |      9 ]
+[ 0  -3     1  |     -5 ]
+[ 0   0  -7/3  |  -19/3 ]
+
+Retrossubstituição:
+x1 = 8/7
+x2 = 18/7
+x3 = 19/7
+
+Solução: x = 8/7, y = 18/7, z = 19/7
+
+--- Exemplo 3 (4 x 4) ---  esperado: x = 2, y = 2, z = 1, w = -3
+Matriz aumentada inicial:
+[ 3   1   1    1  |    6 ]
+[ 2  -3  -3   -1  |   -2 ]
+[ 1  -1   4    5  |  -11 ]
+[ 2   2  -1  -10  |   37 ]
+
+Passo 1: zerando abaixo do pivô (coluna 1)
+L2 <- L2 - (2/3)*L1
+L3 <- L3 - (1/3)*L1
+L4 <- L4 - (2/3)*L1
+[ 3      1      1      1  |    6 ]
+[ 0  -11/3  -11/3   -5/3  |   -6 ]
+[ 0   -4/3   11/3   14/3  |  -13 ]
+[ 0    4/3   -5/3  -32/3  |   33 ]
+
+Passo 2: zerando abaixo do pivô (coluna 2)
+L3 <- L3 - (4/11)*L2
+L4 <- L4 - (-4/11)*L2
+[ 3      1      1        1  |        6 ]
+[ 0  -11/3  -11/3     -5/3  |       -6 ]
+[ 0      0      5    58/11  |  -119/11 ]
+[ 0      0     -3  -124/11  |   339/11 ]
+
+Passo 3: zerando abaixo do pivô (coluna 3)
+L4 <- L4 - (-3/5)*L3
+[ 3      1      1        1  |        6 ]
+[ 0  -11/3  -11/3     -5/3  |       -6 ]
+[ 0      0      5    58/11  |  -119/11 ]
+[ 0      0      0  -446/55  |  1338/55 ]
+
+Retrossubstituição:
+x1 = 2
+x2 = 2
+x3 = 1
+x4 = -3
+
+Solução: x = 2, y = 2, z = 1, w = -3
+
+--- Para praticar ---  
+Matriz aumentada inicial:
+[ 1  1  1  |   6 ]
+[ 2  3  1  |  14 ]
+[ 1  4  3  |  20 ]
+
+Passo 1: zerando abaixo do pivô (coluna 1)
+L2 <- L2 - (2)*L1
+L3 <- L3 - (1)*L1
+[ 1  1   1  |   6 ]
+[ 0  1  -1  |   2 ]
+[ 0  3   2  |  14 ]
+
+Passo 2: zerando abaixo do pivô (coluna 2)
+L3 <- L3 - (3)*L2
+[ 1  1   1  |  6 ]
+[ 0  1  -1  |  2 ]
+[ 0  0   5  |  8 ]
+
+Retrossubstituição:
+x1 = 4/5
+x2 = 18/5
+x3 = 8/5
+
+Solução: a = 4/5, b = 18/5, c = 8/5
+
+========================================================================
+2) APLICAÇÃO: balanceamento de carga em um cluster de 3 servidores
+========================================================================
+Cada servidor (A, B, C) tem hardware diferente. Queremos saber quantas
+requisições por segundo (x, y, z) mandar para cada um de forma que:
+  * o total atenda à demanda: 1200 req/s;
+  * a CPU do cluster seja totalmente aproveitada: 3400 ms de CPU por segundo
+    (cada requisição gasta 2 ms em A, 3 ms em B e 4 ms em C);
+  * o link de rede de 930 Mbps seja totalmente aproveitado
+    (0,5 Mbps por requisição em A, 0,8 em B e 1,2 em C).
+
+Modelo:
+     x +    y +    z = 1200
+    2x +   3y +   4z = 3400
+  0.5x + 0.8y + 1.2z =  930
+
+Matriz aumentada inicial:
+[   1    1    1  |  1200 ]
+[   2    3    4  |  3400 ]
+[ 0.5  0.8  1.2  |   930 ]
+
+L1 <-> L2
+
+Passo 1: zerando abaixo do pivô (coluna 1)
+L2 <- L2 - (0.5)*L1
+L3 <- L3 - (0.25)*L1
+[ 2     3    4  |  3400 ]
+[ 0  -0.5   -1  |  -500 ]
+[ 0  0.05  0.2  |    80 ]
+
+Passo 2: zerando abaixo do pivô (coluna 2)
+L3 <- L3 - (-0.1)*L2
+[ 2     3    4  |  3400 ]
+[ 0  -0.5   -1  |  -500 ]
+[ 0     0  0.1  |    30 ]
+
+Retrossubstituição:
+x1 = 500
+x2 = 400
+x3 = 300
+
+Resíduo ||b - Ax||_inf = 0.00e+00
+
+Interpretação: o balanceador deve enviar 500 req/s ao servidor A, 400 req/s ao B e 300 req/s ao C.
+
+========================================================================
+3) APLICAÇÃO: PageRank como sistema linear
+========================================================================
+O PageRank de cada página é a chance de um "navegador aleatório" estar
+nela. Ele satisfaz  r = d*M*r + (1-d)/n,  ou seja, o sistema linear
+
+    (I - d*M) r = (1-d)/n * [1, 1, ..., 1]
+
+onde M[i][j] = 1/(nº de links da página j) se j aponta para i, e d = 0,85.
+
+  Home     -> Blog, Loja, Sobre
+  Blog     -> Home, Loja
+  Loja     -> Home, Contato, FAQ
+  Contato  -> Home
+  Sobre    -> Home, Blog
+  FAQ      -> Loja, Contato
+
+Página     PageRank (Gauss)   PageRank (potência)
+  Home       0.305267           0.305267
+  Loja       0.215602           0.215602
+  Blog       0.158877           0.158877
+  Contato    0.122674           0.122674
+  Sobre      0.111492           0.111492
+  FAQ        0.086087           0.086087
+Soma dos PageRanks = 1.000000 (deve ser 1)
+Diferença máxima entre os dois métodos: 1.89e-13 (método da potência levou 35 iterações)
+
+========================================================================
+4) ANÁLISE DE PRECISÃO
+========================================================================
+4a) Sistema  1e-20*x1 + x2 = 1  e  x1 + x2 = 2
+    Solução real: x1 ~ 1, x2 ~ 1
+    Sem pivoteamento:       x1 = 0.000000, x2 = 1.000000   (ERRADO)
+    Com pivoteamento parcial: x1 = 1.000000, x2 = 1.000000   (correto)
+    Motivo: dividir por um pivô ~0 gera o multiplicador 1e20, e o "1" da
+    segunda equação some no arredondamento do float (precisão ~1e-16).
+
+4b) Matriz de Hilbert (mal condicionada). Solução exata: x = [1, 1, ..., 1]
+    n    número de condição    erro máximo em x     resíduo
+    2           1.928e+01           6.661e-16     0.00e+00
+    3           5.241e+02           9.992e-15     2.22e-16
+    4           1.551e+04           1.517e-13     0.00e+00
+    5           4.766e+05           2.165e-11     2.22e-16
+    6           1.495e+07           3.893e-10     1.11e-16
+    7           4.754e+08           1.331e-08     0.00e+00
+    8           1.526e+10           6.378e-07     2.22e-16
+    9           4.932e+11           1.065e-05     2.22e-16
+   10           1.603e+13           5.927e-04     1.11e-16
+   11           5.218e+14           6.433e-03     2.22e-16
+   12           1.659e+16           2.725e-01     2.22e-16
+   13           4.322e+18           5.552e+00     2.22e-16
+    Conclusão: o resíduo continua pequeno (o método é estável), mas o erro
+    em x cresce junto com o número de condição. Regra prática: perdemos
+    cerca de log10(cond) dígitos dos ~16 que o float oferece.
+
+========================================================================
+5) DESEMPENHO: tempo x tamanho do sistema
+========================================================================
+     n    Python puro (s)   Gauss NumPy (s)   numpy.linalg.solve (s)   resíduo
+    10          0.0001            0.0000               0.00000          2.2e-16
+    25          0.0003            0.0001               0.00000          2.2e-16
+    50          0.0019            0.0002               0.00001          4.4e-16
+   100          0.0123            0.0007               0.00004          5.6e-16
+   200          0.0787            0.0029               0.00012          1.8e-15
+   400               -            0.0179               0.00051          2.4e-15
+   800               -            0.1389               0.00235          2.6e-15
+    O número de operações da eliminação é ~ 2n^3/3: dobrar n multiplica o
+    tempo por ~8. A biblioteca LAPACK (numpy.linalg.solve) faz o mesmo método
+    (fatoração LU = Gauss com pivoteamento), só que em código compilado e
+    otimizado para o processador.
+
+========================================================================
+6) COMPARAÇÃO: Gauss (direto) x Jacobi e Gauss-Seidel (iterativos)
+========================================================================
+Sistema 50x50, diagonal dominante: True
+  Eliminação de Gauss  iterações:    -   erro máximo: 1.78e-15
+  Jacobi               iterações:   15   erro máximo: 5.45e-12
+  Gauss-Seidel         iterações:   11   erro máximo: 8.09e-13
+    O método direto chega à resposta num número fixo de passos. Os iterativos
+    vão se aproximando aos poucos e só têm convergência garantida em casos
+    especiais (como diagonal dominante), mas gastam pouca memória e são
+    preferidos em sistemas enormes e esparsos.
+
+Gráficos salvos na pasta resultados/
